@@ -3,8 +3,9 @@ const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const auth = require("./routes/auth");
-const budget = require("./routes/budget")
+const auth = require("./routes/authRoute.");
+const budget = require("./routes/budgetRoute.")
+const user = require("./routes/userRoute")
 require("dotenv").config();
 
 mongoose
@@ -20,10 +21,11 @@ mongoose
     console.log("Error with connecting to database");
   });
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cors());
 app.use("/auth", auth);
 app.use("/budget", budget);
-
+app.use("/user", user)
 app.listen(3000, () => {
   console.log("server listen port 3000...");
 });

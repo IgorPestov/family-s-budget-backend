@@ -1,36 +1,91 @@
 const budgetModel = require("../models/budgetShecma");
 const userModel = require("../models/userSchem");
+
+///////// ADD WASTE
 exports.addWaste = async (req, res) => {
-  const { price, date, item } = req.body;
-  const { id } = req.query;
-  const user = await userModel.findOne({ _id: id });
-  if (user.budget) {
-    const waste = await budgetModel.findOneAndUpdate(
-      { _id: user.budget },
+  const { price, date, nameWaste } = req.body;
+  const { userId } = req.query;
+
+  try {
+    const user = await userModel.findById(userId);
+    if (user.budget) {
+      const waste = await budgetModel.findByIdAndUpdate(
+        user.budget,
+        {
+          $push: {
+            waste: {
+              price,
+              date,
+              nameWaste,
+              userId,
+              fullName: user.fullName,
+            },
+          },
+        },
+        { returnOriginal: false }
+      );
+      res.send(waste);
+    } else {
+      const waste = new budgetModel({
+        waste: { price, date, nameWaste, userId, fullName: user.fullName },
+      });
+      const userUpdate = await userModel.findByIdAndUpdate(
+        userId,
+        {
+          budget: waste._id,
+        },
+        { returnOriginal: false }
+      );
+      res.send(userUpdate);
+      waste.save((err, waste) => {
+        if (err) {
+          res.status(400).json({ message: err });
+        }
+      });
+    }
+  } catch (err) {
+    res.status(400).json({
+      message: err,
+    });
+  }
+};
+///////// EDIT WASTE
+exports.editWaste = async (req, res) => {
+  const { price, nameWaste, date, wasteId } = req.body;
+  const { budgetId } = req.query;
+  try {
+      await budgetModel.updateOne(
+      { "waste._id": wasteId },
       {
-        $push: {
-          waste: { price, date, item, userId: id },
+        $set: {
+          "waste.$.price": price,
+          "waste.$.nameWaste": nameWaste,
+          "waste.$.date": date,
         },
       },
-      { returnOriginal: false }
+      { multi: true }
     );
-    res.send(waste);
-  } else {
-    const waste = new budgetModel({
-      waste: { price, date, item, userId: id },
+    const budgetUpdate = await budgetModel.findById(budgetId);
+    res.send(budgetUpdate);
+  } catch (err) {
+    res.status(400).json({
+      message: "Ошибка редактирование. Пожалуйста пропробуйте снова.",
     });
-    const userUpdate = await userModel.findOneAndUpdate(
-      id,
-      {
-        budget: waste._id,
-      },
-      { returnOriginal: false }
+  }
+};
+//////// DELETE WASTE
+exports.deleteWaste = async (req, res) => {
+  const { ids } = req.body;
+  const { budgetId } = req.query;
+  try {
+    const test = await budgetModel.updateOne(
+      { _id: budgetId },
+      { $pull: { waste: { _id: { $in: ids } } } }
     );
-    res.send(userUpdate);
-    waste.save((err, waste) => {
-      if (err) {
-        console.log(err);
-      }
+    res.send(test);
+  } catch (err) {
+    res.status(400).json({
+      message: "Ошибка удаления. Пожалуйста поробуйте снова.",
     });
   }
 };

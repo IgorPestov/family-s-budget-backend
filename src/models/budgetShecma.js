@@ -4,7 +4,8 @@ const budgetSchema = new Schema({
   waste: [
     {
       date: String,
-      item: String,
+      fullName: String,
+      nameWaste: String,
       price: String,
       userId: String
     },

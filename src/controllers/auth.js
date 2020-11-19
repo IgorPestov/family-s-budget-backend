@@ -1,5 +1,7 @@
 const userModel = require("../models/userSchem");
 const budgetModel = require("../models/budgetShecma")
+const jwt = require("jsonwebtoken");
+
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -22,7 +24,6 @@ exports.signup = async (req, res) => {
   const { email, password, fullName } = req.body;
   try {
     const isUserExist = await userModel.findOne({ email });
-    console.log(isUserExist);
     if (isUserExist) {
       return res.status(400).json({
         message: "email already exist",
