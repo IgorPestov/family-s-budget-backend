@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const PORT = process.env.PORT || 3000
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -26,6 +27,6 @@ app.use(cors());
 app.use("/auth", auth);
 app.use("/budget", budget);
 app.use("/user", user)
-app.listen(3000, () => {
-  console.log("server listen port 3000...");
+app.listen(PORT, () => {
+  console.log(`server listen port ${PORT}...`);
 });
