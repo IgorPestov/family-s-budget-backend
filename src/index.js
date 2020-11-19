@@ -19,7 +19,7 @@ mongoose
     console.log("DatabaseChat is connected successfully");
   })
   .catch((err) => {
-    console.log("Error with connecting to database");
+    console.log("Error with connecting to database",err);
   });
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
