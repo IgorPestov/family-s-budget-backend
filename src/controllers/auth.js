@@ -92,7 +92,7 @@ exports.resetPassword = async (req, res) => {
   const { userId } = req.query;
   const { password } = req.body;
   try {
-    await userModel.findByIdAndUpdate({ userId }, { password });
+    await userModel.findByIdAndUpdate({ _id: userId }, { password });
     res.send(true);
   } catch (err) {
     res.status(401).json({ message: err });
