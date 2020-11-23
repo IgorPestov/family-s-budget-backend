@@ -43,9 +43,7 @@ exports.login = async (req, res) => {
         message: "Invalid e-mail or password",
       });
     } else {
-      authHelper.updateTokens(user._id)
-      .then((tokens) =>
-       res.json(tokens));
+      authHelper.updateTokens(user._id).then((tokens) => res.json(tokens));
     }
   } catch (err) {
     res.status(400).json({
@@ -79,5 +77,24 @@ exports.signup = async (req, res) => {
     res.send(400).json({
       message: err,
     });
+  }
+};
+exports.checkEmailForResetPasword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const checkUser = await userModel.findOne({ email });
+    res.send(checkUser.id);
+  } catch (err) {
+    res.status(401).json({ message: err });
+  }
+};
+exports.resetPassword = async (req, res) => {
+  const { userId } = req.query;
+  const { password } = req.body;
+  try {
+    await userModel.findByIdAndUpdate({ userId }, { password });
+    res.send(true);
+  } catch (err) {
+    res.status(401).json({ message: err });
   }
 };

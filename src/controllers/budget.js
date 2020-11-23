@@ -29,14 +29,14 @@ exports.addWaste = async (req, res) => {
       const waste = new budgetModel({
         waste: { price, date, nameWaste, userId, fullName: user.fullName },
       });
-      const userUpdate = await userModel.findByIdAndUpdate(
+       await userModel.findByIdAndUpdate(
         userId,
         {
           budget: waste._id,
         },
         { returnOriginal: false }
       );
-      res.send(userUpdate);
+      res.send(waste);
       waste.save((err, waste) => {
         if (err) {
           res.status(400).json({ message: err });

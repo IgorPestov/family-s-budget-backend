@@ -53,9 +53,6 @@ const updateTokens = (userId) => {
   }));
 };
 module.exports = {
-  // generateRefreshToken,
-  // generateAccessToken,
   generetRestartPassword,
-  // replaceRefreshToken,
   updateTokens
 };
