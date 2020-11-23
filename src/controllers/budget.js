@@ -54,7 +54,7 @@ exports.editWaste = async (req, res) => {
   const { price, nameWaste, date, wasteId } = req.body;
   const { budgetId } = req.query;
   try {
-      await budgetModel.updateOne(
+    await budgetModel.updateOne(
       { "waste._id": wasteId },
       {
         $set: {
@@ -78,11 +78,12 @@ exports.deleteWaste = async (req, res) => {
   const { ids } = req.body;
   const { budgetId } = req.query;
   try {
-    const test = await budgetModel.updateOne(
+    await budgetModel.updateOne(
       { _id: budgetId },
       { $pull: { waste: { _id: { $in: ids } } } }
     );
-    res.send(test);
+    const updateBudget = await budgetModel.findById(budgetId);
+    res.send(updateBudget);
   } catch (err) {
     res.status(400).json({
       message: "Ошибка удаления. Пожалуйста поробуйте снова.",
