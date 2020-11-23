@@ -11,19 +11,11 @@ module.exports = async (req, res, next) => {
     res.status(401).json({ message: "Token not provided!" });
     return;
   }
-  let tokenCheck;
-  try {
     const token = authHeader.replace("Bearer ", "");
-    const tokenId = decode(token).id;
-     tokenCheck = await tokenModel.findOne({ tokenId });
-  } catch (e) {
-    res.status(401).json({ message: "Неверный токен" });
-  }
-
   try {
-    const payload = jwt.verify(tokenCheck.accessToken, process.env.secret);
-    if (payload.type !== "access") {
-      res.status(401).json({ message: "Invalid token 1" });
+    const payload = jwt.verify(token, process.env.secret);
+    if (payload.type !== "refresh") {
+      res.status(401).json({ message: "Invalid token" });
       return;
     }
   } catch (e) {
