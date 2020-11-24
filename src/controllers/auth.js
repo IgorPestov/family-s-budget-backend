@@ -151,6 +151,9 @@ exports.inviteUser = async (req, res) => {
   const { email } = req.body;
 
   const isUserBudget = await userModel.findOne({ email });
+  if (isUserBudget) {
+    res.status(400).json({ message: "Брат, таких нет. Ты походу что-то попутал, попробуй снова"})
+  }
   if (isUserBudget.budget) {
     res.json({
       message:
