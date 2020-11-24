@@ -6,5 +6,6 @@ auth.post("/login", authControllers.login);
 auth.post("/signup", authControllers.signup);
 auth.post("/check-mail", authControllers.checkEmailForResetPasword);
 auth.post("/reset-password", authControllers.resetPassword);
-
+auth.post("/invite-new-user" ,authControllers.inviteNewUser)
+auth.post("/invite-user", authControllers.inviteUser)
 module.exports = auth;

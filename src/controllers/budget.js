@@ -18,6 +18,7 @@ exports.addWaste = async (req, res) => {
               date,
               nameWaste,
               userId,
+              email: user.email,
               fullName: user.fullName,
             },
           },
@@ -27,7 +28,7 @@ exports.addWaste = async (req, res) => {
       res.send(waste);
     } else {
       const waste = new budgetModel({
-        waste: { price, date, nameWaste, userId, fullName: user.fullName },
+        waste: { price, date, nameWaste, userId, fullName: user.fullName,email: user.email, },
       });
        await userModel.findByIdAndUpdate(
         userId,

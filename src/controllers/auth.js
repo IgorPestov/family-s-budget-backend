@@ -3,7 +3,10 @@ const jwt = require("jsonwebtoken");
 const authHelper = require("../helper/authHelper");
 const { json } = require("body-parser");
 const tokenModel = require("../models/tokenSchema");
-
+const mailGun = require("nodemailer-mailgun-transport");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
+//////////////// TOKEN
 exports.refreshToken = (req, res) => {
   const { refreshToken } = req.body;
   let payload;
@@ -34,6 +37,8 @@ exports.refreshToken = (req, res) => {
     .then((tokens) => res.json(tokens))
     .catch((err) => res.status(400).json({ message: err.message }));
 };
+
+//////////////// LOGIN
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -51,6 +56,8 @@ exports.login = async (req, res) => {
     });
   }
 };
+//////////////// SIGNUP
+
 exports.signup = async (req, res) => {
   const { email, password, fullName } = req.body;
   try {
@@ -79,6 +86,9 @@ exports.signup = async (req, res) => {
     });
   }
 };
+
+//////////////// CHECK MAIL FOR RESET PASSWORD
+
 exports.checkEmailForResetPasword = async (req, res) => {
   const { email } = req.body;
   try {
@@ -88,6 +98,9 @@ exports.checkEmailForResetPasword = async (req, res) => {
     res.status(401).json({ message: err });
   }
 };
+
+//////////////// RESET PASSWORD
+
 exports.resetPassword = async (req, res) => {
   const { userId } = req.query;
   const { password } = req.body;
@@ -97,4 +110,51 @@ exports.resetPassword = async (req, res) => {
   } catch (err) {
     res.status(401).json({ message: err });
   }
+};
+
+//////////////// INVITE USER IN GROUP
+
+exports.inviteNewUser = async (req, res) => {
+  const { budgetId, email } = req.body;
+  const isUserCheck = await userModel.findOne({ email });
+  if (isUserCheck.budget) {
+    res
+      .status(400)
+      .json({ message: "Такой пользователь уже состоит в группе" });
+  } else {
+    const auth = {
+      auth: {
+        api_key: process.env.API_KEY,
+        domain: process.env.DOMAIN,
+      },
+    };
+    const transporter = nodemailer.createTransport(mailGun(auth));
+    const mailOptions = {
+      from: "support-user@gmail.com",
+      to: email,
+      subject: "Recovery account",
+      html: `
+     <h1>НАЖАЛ СЮДА БЫРО </h1>
+     <a href="http://localhost:3000/signup?budgetIf=${budgetId}" > Click here that register account </a> 
+     `,
+    };
+    transporter.sendMail(mailOptions, (err, data) => {
+      if (err) {
+        console.log(err);
+        return res.json({ error: err.message });
+      }
+    });
+  }
+};
+exports.inviteUser = async (req, res) => {
+  const { budgetId } = req.query;
+  const { email } = req.body;
+
+  const isUserBudget = await userModel.findOne({ email });
+  if (isUserBudget.budget) {
+    res.json({
+      message:
+        "Прости, у него уже есть семья... Тебе нужен кто-то другой, просто ищи дальше и не опускай руки...",
+    });
+  } else await userModel.findOneAndUpdate({ email }, { budget: budgetId });
 };
