@@ -117,10 +117,11 @@ exports.resetPassword = async (req, res) => {
 exports.inviteNewUser = async (req, res) => {
   const { budgetId, email } = req.body;
   const isUserCheck = await userModel.findOne({ email });
-  if (isUserCheck.budget) {
-    res
-      .status(400)
-      .json({ message: "Такой пользователь уже состоит в группе" });
+  if (isUserCheck && isUserCheck.budget) {
+    res.status(400).json({
+      message:
+        "Прости, у него уже есть семья... Тебе нужен кто-то другой, просто ищи дальше и не опускай руки...",
+    });
   } else {
     const auth = {
       auth: {
@@ -135,7 +136,7 @@ exports.inviteNewUser = async (req, res) => {
       subject: "Recovery account",
       html: `
      <h1>НАЖАЛ СЮДА БЫРО </h1>
-     <a href="http://localhost:3000/signup?budgetIf=${budgetId}" > Click here that register account </a> 
+     <a href="http://localhost:3000/signup?budgetId=${budgetId}" > Click here that register account </a> 
      `,
     };
     transporter.sendMail(mailOptions, (err, data) => {
@@ -144,20 +145,6 @@ exports.inviteNewUser = async (req, res) => {
         return res.json({ error: err.message });
       }
     });
+    res.status(200).json({message : "Ок, я его позову. Тяю-тяю-тяю-тяю"})
   }
-};
-exports.inviteUser = async (req, res) => {
-  const { budgetId } = req.query;
-  const { email } = req.body;
-
-  const isUserBudget = await userModel.findOne({ email });
-  if (isUserBudget) {
-    res.status(400).json({ message: "Брат, таких нет. Ты походу что-то попутал, попробуй снова"})
-  }
-  if (isUserBudget.budget) {
-    res.json({
-      message:
-        "Прости, у него уже есть семья... Тебе нужен кто-то другой, просто ищи дальше и не опускай руки...",
-    });
-  } else await userModel.findOneAndUpdate({ email }, { budget: budgetId });
 };
