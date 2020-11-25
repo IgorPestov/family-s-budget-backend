@@ -13,16 +13,16 @@ exports.refreshToken = (req, res) => {
   try {
     payload = jwt.verify(refreshToken, process.env.secret);
     if (payload.type !== "refresh") {
-      res.status(400).jason({ message: "Неверный токен" });
+      res.status(400).jason({ message: "Invalid token!"});
     }
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
       res.status(400),
         json({
-          message: "Время токена истекло",
+          message: "Token expired!",
         });
     } else if (e instanceof jwt.JsonWebTokenError) {
-      res.status(400).json({ message: "Неверный токен" });
+      res.status(400).json({ message: "Invalid token!" });
     }
   }
   tokenModel
@@ -37,7 +37,6 @@ exports.refreshToken = (req, res) => {
     .then((tokens) => res.json(tokens))
     .catch((err) => res.status(400).json({ message: err.message }));
 };
-
 //////////////// LOGIN
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -45,7 +44,7 @@ exports.login = async (req, res) => {
     const user = await userModel.findOne({ email, password });
     if (!user) {
       res.status(400).json({
-        message: "Invalid e-mail or password",
+        message: "Неверная почти или пароль",
       });
     } else {
       authHelper.updateTokens(user._id).then((tokens) => res.json(tokens));
@@ -57,7 +56,6 @@ exports.login = async (req, res) => {
   }
 };
 //////////////// SIGNUP
-
 exports.signup = async (req, res) => {
   const { email, password, fullName, budgetId } = req.body;
   try {
@@ -96,9 +94,7 @@ exports.signup = async (req, res) => {
     });
   }
 };
-
 //////////////// CHECK MAIL FOR RESET PASSWORD
-
 exports.checkEmailForResetPasword = async (req, res) => {
   const { email } = req.body;
   try {
@@ -108,9 +104,7 @@ exports.checkEmailForResetPasword = async (req, res) => {
     res.status(401).json({ message: err });
   }
 };
-
 //////////////// RESET PASSWORD
-
 exports.resetPassword = async (req, res) => {
   const { userId } = req.query;
   const { password } = req.body;
@@ -121,9 +115,7 @@ exports.resetPassword = async (req, res) => {
     res.status(401).json({ message: err });
   }
 };
-
 //////////////// INVITE USER IN GROUP
-
 exports.inviteNewUser = async (req, res) => {
   const { budgetId, email } = req.body;
   const isUserCheck = await userModel.findOne({ email });
@@ -145,8 +137,8 @@ exports.inviteNewUser = async (req, res) => {
       to: email,
       subject: "Recovery account",
       html: `
-     <h1>НАЖАЛ СЮДА БЫРО </h1>
-     <a href="http://localhost:3000/signup?budgetId=${budgetId}" > Click here that register account </a> 
+     <h1>Нажми на неё </h1>
+     <a href="https://budget-family.herokuapp.com/signup?budgetId=${budgetId}" > Да-да, именно на меня </a> 
      `,
     };
     transporter.sendMail(mailOptions, (err, data) => {
