@@ -1,8 +1,4 @@
 const jwt = require("jsonwebtoken");
-const authHelper = require("../helper/authHelper");
-const tokenModel = require("../models/tokenSchema");
-const decode = require("jwt-decode");
-const { json } = require("body-parser");
 require("dotenv").config();
 
 module.exports = async (req, res, next) => {

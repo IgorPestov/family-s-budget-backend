@@ -59,7 +59,7 @@ exports.login = async (req, res) => {
 //////////////// SIGNUP
 
 exports.signup = async (req, res) => {
-  const { email, password, fullName } = req.body;
+  const { email, password, fullName, budgetId } = req.body;
   try {
     const isUserExist = await userModel.findOne({ email });
     if (isUserExist) {
@@ -67,11 +67,21 @@ exports.signup = async (req, res) => {
         message: "email already exist",
       });
     }
-    const user = new userModel({
-      email,
-      password,
-      fullName,
-    });
+    let user;
+    if (budgetId) {
+       user = new userModel({
+        email,
+        password,
+        fullName,
+        budget: budgetId,
+      });
+    } else {
+       user = new userModel({
+        email,
+        password,
+        fullName,
+      });
+    }
     user.save((err, user) => {
       if (err) {
         return res.status(400).json({
@@ -145,6 +155,6 @@ exports.inviteNewUser = async (req, res) => {
         return res.json({ error: err.message });
       }
     });
-    res.json({message : "Ок, я его позову. Тяю-тяю-тяю-тяю"})
+    res.json({ message: "Ок, я его позову. Тяю-тяю-тяю-тяю" });
   }
 };

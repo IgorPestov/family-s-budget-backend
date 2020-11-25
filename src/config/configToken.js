@@ -8,7 +8,7 @@ module.exports = {
       },
       refresh: {
         type: "refresh",
-        expiresIn: "60d",
+        expiresIn: "10s",
       },
       restartPassword: {
         type: "reset",
