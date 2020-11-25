@@ -145,6 +145,6 @@ exports.inviteNewUser = async (req, res) => {
         return res.json({ error: err.message });
       }
     });
-    res.status(200).json({message : "Ок, я его позову. Тяю-тяю-тяю-тяю"})
+    res.json({message : "Ок, я его позову. Тяю-тяю-тяю-тяю"})
   }
 };
