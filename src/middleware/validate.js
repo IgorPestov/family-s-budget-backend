@@ -11,7 +11,7 @@ module.exports = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, process.env.secret);
     if (payload.type !== "refresh") {
-      res.status(401).json({ message: "Invalid token" });
+      res.status(401).json({ message: "Invalid token!" });
       return;
     }
   } catch (e) {
