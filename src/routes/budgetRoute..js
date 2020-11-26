@@ -5,5 +5,5 @@ const validate = require("../middleware/validate");
 budget.post("/add-waste", validate, budgetControllers.addWaste);
 budget.put("/edit-waste", validate, budgetControllers.editWaste);
 budget.delete("/delete-waste", validate, budgetControllers.deleteWaste);
-budget.get("/all-famyli", budgetControllers.showAllBudget);
+budget.get("/all-familys", budgetControllers.showAllBudget);
 module.exports = budget;
