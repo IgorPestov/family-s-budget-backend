@@ -9,3 +9,7 @@ exports.showUser = async (req, res) => {
     res.json({ user, budget });
   } else res.json({ user });
 };
+exports.requestInFamily = async(req, res) => {
+  const {familyName , email} =req.body
+  // const 
+}

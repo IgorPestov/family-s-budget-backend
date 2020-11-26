@@ -1,9 +1,10 @@
 const budgetModel = require("../models/budgetShecma");
 const userModel = require("../models/userSchem");
+const budget = require("../routes/budgetRoute.");
 
 ///////// ADD WASTE
 exports.addWaste = async (req, res) => {
-  const { price, date, nameWaste } = req.body;
+  const { price, date, nameWaste, familyName } = req.body;
   const { userId } = req.query;
 
   try {
@@ -27,22 +28,33 @@ exports.addWaste = async (req, res) => {
       );
       res.send(waste);
     } else {
-      const waste = new budgetModel({
-        waste: { price, date, nameWaste, userId, fullName: user.fullName,email: user.email, },
-      });
-       await userModel.findByIdAndUpdate(
-        userId,
-        {
-          budget: waste._id,
-        },
-        { returnOriginal: false }
-      );
-      res.send(waste);
-      waste.save((err, waste) => {
-        if (err) {
-          res.status(400).json({ message: err });
-        }
-      });
+      const checkName = await budgetModel.findOne({ familyName });
+      if (!checkName) {
+        const waste = new budgetModel({
+          waste: {
+            price,
+            date,
+            nameWaste,
+            userId,
+            fullName: user.fullName,
+            email: user.email,
+          },
+          familyName,
+        });
+        await userModel.findByIdAndUpdate(
+          userId,
+          { admin: true, budget: waste._id },
+          { returnOriginal: false }
+        );
+        res.send(waste);
+        waste.save((err, waste) => {
+          if (err) {
+            res.status(400).json({ message: err });
+          }
+        });
+      } else {
+        res.status(400).json({message: "Такая семья уже есть"})
+      }
     }
   } catch (err) {
     res.status(400).json({
@@ -90,4 +102,9 @@ exports.deleteWaste = async (req, res) => {
       message: "Ошибка удаления. Пожалуйста поробуйте снова.",
     });
   }
+};
+exports.showAllBudget = async (req, res) => {
+  const allBudget = await budgetModel.find({}, { waste: 0 });
+  console.log("all budget", allBudget);
+  res.send(allBudget);
 };

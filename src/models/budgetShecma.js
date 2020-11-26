@@ -8,9 +8,10 @@ const budgetSchema = new Schema({
       email: String,
       nameWaste: String,
       price: Number,
-      userId: String
+      userId: String,
     },
   ],
+  familyName: { type: String },
 });
 const budgetModel = model("Budget", budgetSchema);
 

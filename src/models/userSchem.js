@@ -5,6 +5,7 @@ const userSchema = new Schema({
   password: { type: String, select: false },
   fullName: { type: String },
   budget: { type: String },
+  admin: { type: Boolean, default:false },
 });
 const userModel = model("User", userSchema);
 module.exports = userModel;
