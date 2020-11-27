@@ -18,7 +18,7 @@ exports.requestInFamily = async (req, res) => {
       $push: {
         request: {
           fullName: userRequestInFamily.fullName,
-          _id: userRequestInFamily._id,
+          userId: userRequestInFamily._id,
         },
       },
     },
