@@ -6,7 +6,6 @@ const budget = require("../routes/budgetRoute.");
 exports.addWaste = async (req, res) => {
   const { price, date, nameWaste, familyName } = req.body;
   const { userId } = req.query;
-  console.log(price, date, nameWaste, familyName )
   try {
     const user = await userModel.findById(userId);
     if (user.budget) {
