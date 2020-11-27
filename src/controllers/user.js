@@ -65,13 +65,15 @@ exports.confirmationUserToFamily = async (req, res) => {
     await userModel.findOneAndUpdate({ _id: userId }, { budget: budgetId });
     admin = await userModel.findOneAndUpdate(
       { _id: adminId },
-      { $pull: { request: { userId } } }
+      { $pull: { request: { userId } } },
+      { returnOriginal: false }
     );
   } else {
     await userModel.findOneAndUpdate({ _id: userId }, { request: [] });
     admin = await userModel.findOneAndUpdate(
       { _id: adminId },
-      { $pull: { request: { userId } } }
+      { $pull: { request: { userId } } },
+      { returnOriginal: false }
     );
   }
   res.send(admin);
