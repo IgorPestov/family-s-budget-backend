@@ -9,7 +9,22 @@ exports.showUser = async (req, res) => {
     res.json({ user, budget });
   } else res.json({ user });
 };
-exports.requestInFamily = async(req, res) => {
-  const {familyName , email} =req.body
-  // const 
-}
+exports.requestInFamily = async (req, res) => {
+  const { userId, budgetId } = req.body;
+  const userRequestInFamily = await userModel.findOne({ _id: userId });
+  const userAdmin = await userModel.findOneAndUpdate(
+    { budget: budgetId, admin: true },
+    {
+      $push: {
+        request: {
+          fullName: userRequestInFamily.fullName,
+          _id: userRequestInFamily._id,
+        },
+      },
+    },
+    { returnOriginal: false }
+  );
+  
+  console.log(test.number.length)
+ res.send(userAdmin)
+};

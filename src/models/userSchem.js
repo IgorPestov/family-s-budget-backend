@@ -5,7 +5,13 @@ const userSchema = new Schema({
   password: { type: String, select: false },
   fullName: { type: String },
   budget: { type: String },
-  admin: { type: Boolean, default:false },
+  admin: { type: Boolean, default: false },
+  request: [
+    {
+      fullName:{ type:String},
+      _id: { type: Object, unique: true },
+    },
+  ],
 });
 const userModel = model("User", userSchema);
 module.exports = userModel;
