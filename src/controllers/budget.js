@@ -28,7 +28,7 @@ exports.addWaste = async (req, res) => {
       );
       res.send(waste);
     } else {
-      const checkName = await budgetModel.findOne({ familyName });
+      const checkName = await budgetModel.findOneAndUpdate({ familyName });
       if (!checkName) {
         const waste = new budgetModel({
           waste: {
@@ -43,7 +43,7 @@ exports.addWaste = async (req, res) => {
         });
         await userModel.findByIdAndUpdate(
           userId,
-          { admin: true, budget: waste._id },
+          { admin: true, budget: waste._id, request: []},
           { returnOriginal: false }
         );
         res.send(waste);
@@ -105,6 +105,5 @@ exports.deleteWaste = async (req, res) => {
 };
 exports.showAllBudget = async (req, res) => {
   const allBudget = await budgetModel.find({}, { waste: 0 });
-  console.log("all budget", allBudget);
   res.send(allBudget);
 };

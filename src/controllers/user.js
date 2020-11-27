@@ -14,8 +14,11 @@ exports.requestInFamily = async (req, res) => {
   const { userId, budgetId } = req.body;
   const userRequestInFamily = await userModel.findOne({ _id: userId });
   const budget = await budgetModel.findOne({ _id: budgetId });
-  
-  if (userRequestInFamily.request.length > 0 && userRequestInFamily.request[0].familyName === budget.familyName) {
+
+  if (
+    userRequestInFamily.request.length > 0 &&
+    userRequestInFamily.request[0].familyName === budget.familyName
+  ) {
     res.status(400).json({ message: "Вы уже отправили этой семье запорос" });
   } else {
     await userModel.findOneAndUpdate(
@@ -23,7 +26,7 @@ exports.requestInFamily = async (req, res) => {
       {
         $pull: {
           request: {
-            userId: userId,
+            userId,
           },
         },
       }
@@ -55,7 +58,22 @@ exports.requestInFamily = async (req, res) => {
     res.send(userUpdate);
   }
 };
-exports.addUserToFamily = async (req, res) => {
-  // const { userId,}
+exports.confirmationUserToFamily = async (req, res) => {
+  const { userId, isJoin, adminId, budgetId } = req.body;
+  if (isJoin === "true") {
+    await userModel.findOneAndUpdate({ _id: userId }, { budget: budgetId });
+    await userModel.findOneAndUpdate(
+      { _id: adminId },
+      { $pull: { request: { userId } } }
+    );
+  } else {
+    await userModel.findOneAndUpdate(
+      { _id: userId },
+       { request: [] }
+    );
+    await userModel.findOneAndUpdate(
+      { _id: adminId },
+      { $pull: { request: { userId } } }
+    );
+  }
 };
-exports.deleteUserToFamily = async (req, res) => {};
