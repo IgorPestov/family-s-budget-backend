@@ -9,7 +9,7 @@ const userSchema = new Schema({
   request: [
     {
       fullName:{ type:String},
-      _id: { type: Object, unique: true },
+      userId: { type: Object, unique: true },
     },
   ],
 });

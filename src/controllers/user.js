@@ -25,6 +25,5 @@ exports.requestInFamily = async (req, res) => {
     { returnOriginal: false }
   );
   
-  console.log(test.number.length)
  res.send(userAdmin)
 };
