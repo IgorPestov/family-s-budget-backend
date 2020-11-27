@@ -10,7 +10,7 @@ const userSchema = new Schema({
     {
       fullName: { type:String},
       userId: { type: Object, unique: true },
-      budgetId: {type:String,unique: true }
+      familyName: {type:String,unique: true }
     },
   ],
 });

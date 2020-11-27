@@ -12,34 +12,42 @@ exports.showUser = async (req, res) => {
 };
 exports.requestInFamily = async (req, res) => {
   const { userId, budgetId } = req.body;
-  const userRequestInFamily = await userModel.findOne({_id:userId})
-   if(userRequestInFamily.request.length > 0) {
-     
-   }
-  const userUpdate = await userModel.findOneAndUpdate(
-    { _id: userId, admin: false, "request.budgetId": { $ne: budgetId } },
-    {
-      $addToSet: {
+  const userRequestInFamily = await userModel.findOne({ _id: userId });
+  const budget = await budgetModel.findOne({ _id: budgetId });
+  if (userRequestInFamily.request[0].familyName === budget.familyName) {
+    res.status(400).json({ message: "Вы уже отправили этой семье запорос" });
+  } else {
+    await userModel.findOneAndUpdate({"request.userId":userId}, {
+     $pull: {
+       request: {
+        userId:userId
+       }
+     }
+   })
+    userUpdate = await userModel.findOneAndUpdate(
+      { _id: userId, admin: false },
+      {
         request: {
-          budgetId,
+          familyName: budget.familyName,
         },
       },
-    },
-    { returnOriginal: false }
-  );
-  console.log(userRequestInFamily)
-   await userModel.findOneAndUpdate(
-    { budget: budgetId, admin: true, "request.userId": { $ne: userId } },
-    {
-      $addToSet: {
-        request: {
-          fullName: userRequestInFamily.fullName,
-          userId,
-        },
-      },
-    },
-    { returnOriginal: false }
-  );
 
-  res.send(userUpdate);
+      { returnOriginal: false }
+    );
+
+    console.log(userRequestInFamily);
+    await userModel.findOneAndUpdate(
+      { budget: budgetId, admin: true, "request.userId": { $ne: userId } },
+      {
+        $addToSet: {
+          request: {
+            fullName: userRequestInFamily.fullName,
+            userId,
+          },
+        },
+      },
+      { returnOriginal: false }
+    );
+    res.send(userUpdate);
+  }
 };
