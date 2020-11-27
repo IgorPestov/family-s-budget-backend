@@ -14,7 +14,6 @@ exports.requestInFamily = async (req, res) => {
   const { userId, budgetId } = req.body;
   const userRequestInFamily = await userModel.findOne({ _id: userId });
   const budget = await budgetModel.findOne({ _id: budgetId });
-
   if (
     userRequestInFamily.request.length > 0 &&
     userRequestInFamily.request[0].familyName === budget.familyName
@@ -31,7 +30,7 @@ exports.requestInFamily = async (req, res) => {
         },
       }
     );
-    userUpdate = await userModel.findOneAndUpdate(
+  const  userUpdate = await userModel.findOneAndUpdate(
       { _id: userId, admin: false },
       {
         request: {
@@ -42,7 +41,6 @@ exports.requestInFamily = async (req, res) => {
       { returnOriginal: false }
     );
 
-    console.log(userRequestInFamily);
     await userModel.findOneAndUpdate(
       { budget: budgetId, admin: true, "request.userId": { $ne: userId } },
       {
@@ -55,6 +53,7 @@ exports.requestInFamily = async (req, res) => {
       },
       { returnOriginal: false }
     );
+
     res.send(userUpdate);
   }
 };

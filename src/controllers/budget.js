@@ -1,6 +1,7 @@
 const budgetModel = require("../models/budgetShecma");
 const userModel = require("../models/userSchem");
 const budget = require("../routes/budgetRoute.");
+const { request } = require("express");
 
 ///////// ADD WASTE
 exports.addWaste = async (req, res) => {
@@ -8,6 +9,8 @@ exports.addWaste = async (req, res) => {
   const { userId } = req.query;
   try {
     const user = await userModel.findById(userId);
+    console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwork", user);
+
     if (user.budget) {
       const waste = await budgetModel.findByIdAndUpdate(
         user.budget,
@@ -28,6 +31,10 @@ exports.addWaste = async (req, res) => {
       res.send(waste);
     } else {
       const checkName = await budgetModel.findOne({ familyName });
+      const test = await userModel.findOneAndUpdate(
+        { "request.userId": userId },
+        { $pull: { request: { userId } } }
+      );
       if (!checkName) {
         const waste = new budgetModel({
           waste: {
