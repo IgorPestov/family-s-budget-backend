@@ -28,7 +28,7 @@ exports.addWaste = async (req, res) => {
       );
       res.send(waste);
     } else {
-      const checkName = await budgetModel.findOneAndUpdate({ familyName });
+      const checkName = await budgetModel.findOne({ familyName });
       if (!checkName) {
         const waste = new budgetModel({
           waste: {
