@@ -60,20 +60,19 @@ exports.requestInFamily = async (req, res) => {
 };
 exports.confirmationUserToFamily = async (req, res) => {
   const { userId, isJoin, adminId, budgetId } = req.body;
+  let admin;
   if (isJoin === "true") {
     await userModel.findOneAndUpdate({ _id: userId }, { budget: budgetId });
-    await userModel.findOneAndUpdate(
+    admin = await userModel.findOneAndUpdate(
       { _id: adminId },
       { $pull: { request: { userId } } }
     );
   } else {
-    await userModel.findOneAndUpdate(
-      { _id: userId },
-       { request: [] }
-    );
-    await userModel.findOneAndUpdate(
+    await userModel.findOneAndUpdate({ _id: userId }, { request: [] });
+    admin = await userModel.findOneAndUpdate(
       { _id: adminId },
       { $pull: { request: { userId } } }
     );
   }
+  res.send(admin);
 };
