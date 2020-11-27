@@ -8,8 +8,9 @@ const userSchema = new Schema({
   admin: { type: Boolean, default: false },
   request: [
     {
-      fullName:{ type:String},
+      fullName: { type:String},
       userId: { type: Object, unique: true },
+      budgetId: {type:String,unique: true }
     },
   ],
 });
